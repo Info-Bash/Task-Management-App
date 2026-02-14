@@ -1,0 +1,56 @@
+/* Crucial: Tooltips need a relative parent to position themselves */
+.input-group.has-validation {
+  position: relative;
+}
+
+/* Ensure tooltips are visible over the card overflow */
+.right-panel {
+  overflow: visible !important;
+}
+
+/* Tooltip Styling adjustments */
+.invalid-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  z-index: 5;
+  padding: .25rem .5rem;
+  margin-top: .1rem;
+  font-size: .765rem;
+  line-height: 1.5;
+  color: #fff;
+  border-radius: .25rem;
+}
+
+/* Position tooltips slightly better so they don't hide the input text */
+.invalid-tooltip {
+    margin-top: 2px;
+    opacity: 0.95;
+}
+
+/* Ensure the input group doesn't cut off the tooltip shadow */
+.input-group {
+    margin-bottom: 5px; 
+}
+
+/* Show tooltip when Bootstrap validation is triggered */
+.was-validated .form-control:invalid ~ .invalid-tooltip,
+.was-validated .form-select:invalid ~ .invalid-tooltip {
+  display: block;
+}
+
+/* Add vertical spacing between rows to account for floating tooltips */
+.row.g-4 > div {
+    margin-bottom: 8px; 
+}
+
+/* Ensure the Age/ID row has enough space for tooltips */
+.input-group {
+    margin-bottom: 2px;
+}
+
+/*  Add some extra space between rows so tooltips don't hide labels 
+.col-md-6, .col-md-12 {
+  margin-bottom: 10px;
+} */
+ 

@@ -1,0 +1,25 @@
+body {
+  background-color: #f0f2f5;
+  padding: 20px 0;
+}
+
+/* Custom scrollbar for better look */
+div::-webkit-scrollbar {
+  width: 6px;
+}
+div::-webkit-scrollbar-thumb {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+}
+
+/* Ensure the table doesn't collapse layout */
+.table td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #d7dee7;
+}
+
+/* Small text for dates */
+.x-small {
+  font-size: 0.75rem;
+}

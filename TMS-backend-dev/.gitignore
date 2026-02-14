@@ -1,0 +1,54 @@
+# --- Security & Secrets ---
+.env
+.env.local
+*.pem
+*.key
+
+# --- OS Metadata ---
+.DS_Store
+Thumbs.db
+
+# --- Node.js / JavaScript ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.lib/
+parts/
+sdist/
+var/
+wheels/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Java / Spring Boot ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.war
+*.ear
+*.log
+
+# --- Go ---
+bin/
+obj/
+
+# --- Databases ---
+*.db
+*.sqlite

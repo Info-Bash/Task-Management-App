@@ -1,0 +1,27 @@
+// 1. Bootstrap functions (must be first)
+@import "../../node_modules/bootstrap/scss/functions";
+
+// 2. Override Bootstrap variables
+$primary: #063970;
+$danger: #DC2626;
+$success: #23720b;
+
+// 3. Bootstrap variables
+@import "../../node_modules/bootstrap/scss/variables";
+
+// 4. Custom theme colors
+$mycustom-theme-colors: (
+  "altlight": #f2ebfa,
+);
+
+// 5. Merge with Bootstrap theme colors
+$theme-colors: map-merge($theme-colors, $mycustom-theme-colors);
+
+// 6. Import full Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// 7. Custom component overrides (AFTER Bootstrap)
+.dropdown-menu {
+  --bs-dropdown-link-hover-bg: var(--bs-primary);
+  --bs-dropdown-link-hover-color: #fff;
+}
