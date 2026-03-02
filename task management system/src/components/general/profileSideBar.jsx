@@ -135,7 +135,7 @@ const ProfileSidebar = ({ show, handleClose, user, onSave, onLogout }) => {
 
       <div ref={containerRef} className="offcanvas-body">
         <div className="text-center mb-4">
-          <img src="/images/profile-icon-isolated-on-grey-260nw-1642562347.webp"
+          <img src={user?.profilePic || `/src/assets/icons/${user?.gender}-profile-image.png`}
             className="rounded-circle border" width="100" height="100" alt="Profile" />
           <h4 className="mt-2">{user ? user.fullname || 'User' : 'User'}</h4>
           <span className="badge bg-light text-dark">{user ? user.role || 'Unknown' : 'Unknown'}</span>

@@ -102,9 +102,9 @@ const userSchema = new mongoose.Schema({
   },
 
   isActive: {
-    type: String,
-    enum: ['true', 'false'],
-    default: 'true'
+    type: Boolean,
+    enum: [true, false],
+    default: true
   },
 
   role: {
@@ -122,6 +122,10 @@ userSchema.pre('save', async function () {
 
   this.password = await bcrypt.hash(this.password, 10);
 });
+
+
+userSchema.index({ username: 1 });
+userSchema.index({ role: 1 });
 
 
 export default mongoose.model('User', userSchema);

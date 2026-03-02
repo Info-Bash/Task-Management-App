@@ -1,24 +1,20 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import Nav from "../../components/general/nav";
 import PageHeader from "../../components/general/header";
 import ProfileSidebar from "../../components/general/profileSideBar";
-import { CreateTask } from "../../components/user/createTask";
-import TaskManager from "../../components/user/taskSection";
-import "react-toastify/dist/ReactToastify.css";
-import "./userPage.css";
+import UserManagement from "../../components/admin/userManagement";
+import AdminTaskManager from "../../components/admin/adminTaskManagemengt";
 
+function AdminPage() {
 
-export function UserPage() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [userProfile, setUserProfile] = useState(null);
-
-  const [tasks, setTasks] = useState([]);
 
   const navigate = useNavigate();
 
@@ -44,7 +40,7 @@ export function UserPage() {
     if (!user || !user._id) return;
     const fetchUserProfile = async () => {
       try {
-        const res = await API.get(`/user/profile/${user._id}`);
+        const res = await API.get(`/admin/profile/${user._id}`);
         setUserProfile(res.data.user);
       } catch (e) {
         console.log("Error fetching user profile:", e);
@@ -59,7 +55,7 @@ export function UserPage() {
 
   /* User profile Update  */
   const handleUpdateUser = async (updatedData) => {
-    const res = await API.put(`/user/update-profile/${user._id}`, updatedData);
+    const res = await API.put(`/admin/update-profile/${user._id}`, updatedData);
 
     const updatedUser = res.data.user;
     setUserProfile(updatedUser);
@@ -77,7 +73,6 @@ export function UserPage() {
 
     navigate("/login");
   };
-
 
   return (
     <>
@@ -100,20 +95,15 @@ export function UserPage() {
         onLogout={handleLogout}
       />
 
-
-      {/* Backdrop for the sidebar */}
       {showSidebar && <div className="offcanvas-backdrop fade show" onClick={() => setShowSidebar(false)}></div>}
 
-      {/* Create Task Section  */}
-      <CreateTask
-        setTasks={setTasks}
-      />
-
-      {/* Task Manager Section */}
-      <TaskManager
-        tasks={tasks}
-        setTasks={setTasks}
-      />
+      {/* All Users Section */}
+        <UserManagement />
+      
+      {/* All users tasks section */}
+      <AdminTaskManager />
     </>
   );
 }
+
+export default AdminPage;

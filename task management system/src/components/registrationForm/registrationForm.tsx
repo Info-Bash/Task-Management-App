@@ -107,7 +107,7 @@ export function RegistrationForm() {
 
     //API CALL
     try {
-      const res = await API.post("/registration", formData,
+      const res = await API.post("/auth/registration", formData,
         { headers: { "Content-Type": "application/json" } }
       );
 

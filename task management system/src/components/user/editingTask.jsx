@@ -47,7 +47,7 @@ export function EditingTask({ onClose, task, setTasks }) {
     try {
 
       setIsSubmitting(true);
-      const res = await API.patch(`/edit-task/${editTaskData.id}`, editTaskData);
+      const res = await API.patch(`/user/edit-task/${editTaskData.id}`, editTaskData);
 
       setTasks(prev =>
         prev.map(t => (t._id === editTaskData.id ? { ...t, title: res.data.data.title, desc: res.data.data.desc } : t))
@@ -91,31 +91,33 @@ export function EditingTask({ onClose, task, setTasks }) {
           </div>
 
           {/* Body */}
-          <div className="modal-body" style={{ minWidth: '500px', height: '350px', overflowY: 'auto' }}>
-            <div className="mb-3">
-              <label className="form-label fw-bold text-secondary">Task Title</label>
-              <input
-                name="title"
-                type="text"
-                className={`form-control ${errors.title ? "is-invalid" : ""}`}
-                value={editTaskData.title}
-                onChange={handleChange("title")}
-                onBlur={() => handleBlur("title", editTaskData.title)}
-              />
-              {errors.title && <div className="invalid-feedback">{errors.title}</div>}
-            </div>
+          <div className="modal-body" style={{ height: '350px', overflowY: 'auto' }}>
+            <div className="container-fluid"> {/* Added container-fluid for better padding control */}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-secondary">Task Title</label>
+                <input
+                  name="title"
+                  type="text"
+                  className={`form-control ${errors.title ? "is-invalid" : ""}`}
+                  value={editTaskData.title}
+                  onChange={handleChange("title")}
+                  onBlur={() => handleBlur("title", editTaskData.title)}
+                />
+                {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+              </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-bold text-secondary">Description</label>
-              <textarea
-                name="desc"
-                rows={5}
-                className={`form-control ${errors.desc ? "is-invalid" : ""}`}
-                value={editTaskData.desc}
-                onChange={handleChange("desc")}
-                onBlur={() => handleBlur("desc", editTaskData.desc)}
-              />
-              {errors.desc && <div className="invalid-feedback">{errors.desc}</div>}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-secondary">Description</label>
+                <textarea
+                  name="desc"
+                  rows={5}
+                  className={`form-control ${errors.desc ? "is-invalid" : ""}`}
+                  value={editTaskData.desc}
+                  onChange={handleChange("desc")}
+                  onBlur={() => handleBlur("desc", editTaskData.desc)}
+                />
+                {errors.desc && <div className="invalid-feedback">{errors.desc}</div>}
+              </div>
             </div>
           </div>
 

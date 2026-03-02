@@ -51,7 +51,7 @@ export const userProfileUpdateController = async (req, res) => {
         new: true,
         runValidators: true
       }
-    ).select("fullname age gender phonenumber maritalstatus email username nationalid role");
+    ).select("fullname age gender phonenumber maritalstatus email username nationalid role -_id");
 
     if (!updatedUser) {
       return res.status(404).json({

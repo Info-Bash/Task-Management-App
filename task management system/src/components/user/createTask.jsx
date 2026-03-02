@@ -94,7 +94,7 @@ export function CreateTask( { setTasks } ) {
   setUpdateStatus("");
 
   try {
-    const response = await API.post("/create-task", result.data);
+    const response = await API.post("/user/create-task", result.data);
     const newTask = response.data.data;
 
     if (response.data.success) {

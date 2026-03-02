@@ -70,13 +70,13 @@ export function LoginForm() {
 
     try {
       isSetSubmitLoading(true);
-      const res = await API.post<LoginResponse>("/login", formData);
+      const res = await API.post<LoginResponse>("/auth/login", formData);
 
       // Save token
       localStorage.setItem("token", res.data.accessToken);
 
       // Immediately fetch user
-      const me = await API.get("/me");
+      const me = await API.get("/user/me");
       localStorage.setItem("user", JSON.stringify(me.data.user));
 
       // Reset form input fields and errors
@@ -88,7 +88,11 @@ export function LoginForm() {
       setErrors({});
       setTouched({});
 
-      navigate("/user-home");
+      if (me.data.user.role === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
 
     } catch (e: unknown) {
 

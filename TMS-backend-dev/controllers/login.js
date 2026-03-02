@@ -16,6 +16,13 @@ const loginController = async (req, res) => {
       })
     }
 
+    // Check if user is suspended
+    if (!user.isActive) {
+      return res.status(400).json({
+        message: "Your account has been suspended. Contact admin."
+      })
+    }
+
     // compare password when user exist
     const isPassMatch = await bcrypt.compare(password, user.password);
 
@@ -32,7 +39,7 @@ const loginController = async (req, res) => {
       username: user.username,
       role: user.role
     }, process.env.JWT_SECRET_KEY, {
-      expiresIn: '60m'
+      expiresIn: '10hrs'
     })
 
     res.status(200).json({

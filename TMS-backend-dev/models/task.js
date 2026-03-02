@@ -55,17 +55,6 @@ taskSchema.pre("save", function () {
   } 
 });
 
-/* taskSchema.pre("findOneAndUpdate", function () {
-  const update = this.getUpdate();
-
-  if (update.status === "completed") {
-    update.dateCompleted = new Date();
-  }
-
-  if (update.verified === true) {
-    update.dateVerified = new Date();
-  }
-}); */
 
 taskSchema.pre("findOneAndUpdate", function () {
   const update = this.getUpdate();
@@ -94,7 +83,7 @@ taskSchema.pre("findOneAndUpdate", function () {
 
 
 // For faster filtering
-taskSchema.index({ owner: 1, status: 1 });
+taskSchema.index({ owner: 1, status: 1, title: 1, createdAt: -1 });
 
 // Prevent duplicate task titles per user
 taskSchema.index({ owner: 1, title: 1 }, { unique: true });

@@ -6,7 +6,8 @@ export const ConfirmationModal = ({
   onConfirm, 
   title, 
   message, 
-  subMessage, 
+  subMessage,
+  smallSubMessage, 
   icon = "⚠️", 
   confirmText,
   cancelText,
@@ -40,7 +41,9 @@ export const ConfirmationModal = ({
             </div>
             <p className="mb-1 text-muted">{message}</p>
             <h5 className="fw-bold">{subMessage}</h5>
-            <small className="text-secondary">This action cannot be undone.</small>
+            <small className="text-secondary">
+              {smallSubMessage && <span>{smallSubMessage}</span> 
+              ||'This action cannot be undone.'}</small>
           </div>
 
           <div className="modal-footer border-0 pt-0 pb-4 d-flex justify-content-center">

@@ -4,6 +4,7 @@ import cors from 'cors';
 import dataBaseConnect from './database/db.js'
 import authRouter from './routes/auth.js';
 import homeRouter from './routes/homeRoute.js'
+import adminRouter from './routes/adminPageRoute.js';
 import meRouter from './routes/me.js';
 dotenv.config();
 
@@ -22,9 +23,10 @@ app.use(cors({
 //express middleware
 app.use(express.json());
 
-app.use('/api/TMS', authRouter);
-app.use('/api/TMS', homeRouter);
-app.use('/api/TMS', meRouter);
+app.use('/api/TMS/auth', authRouter);
+app.use('/api/TMS/user', homeRouter);
+app.use('/api/TMS/user', meRouter);
+app.use('/api/TMS/admin', adminRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on PORT: ${PORT}`);

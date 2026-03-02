@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ConfirmationModal } from './confirmationModal';
+import { ConfirmationModal } from '../general/confirmationModal';
 import { EditingTask } from './editingTask';
-import { ViewTask } from './viewingTask';
+import { ViewTask } from '../general/viewingTask';
 import { smartDate } from '../../utils/dateFormat';
-import ActionDropdown from './floatingDropdown';
-import { toast } from 'react-toastify';
+import ActionDropdown from '../general/floatingDropdown';
+import useApiWithToast from '../../hooks/useApiWithToast';
 import API from '../../api/api';
 
 const TaskManager = ({ tasks, setTasks }) => {
@@ -19,11 +19,14 @@ const TaskManager = ({ tasks, setTasks }) => {
   const [viewingTask, setViewingTask] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
 
+  // Custom hook for API calls with toast notifications
+  const { execute } = useApiWithToast();
+
   useEffect(() => {
     const fetchUserTasks = async () => {
       try {
         setLoading(true);
-        const res = await API.get(`/user-tasks`);
+        const res = await API.get(`/user/tasks`);
         setTasks(res.data.data);
         setError("");
       } catch (e) {
@@ -80,81 +83,62 @@ const TaskManager = ({ tasks, setTasks }) => {
     setShowDeleteModal(true);
   };
 
-  // final delete execution
+  // final delete execution after confirmation
   const confirmDelete = async () => {
     setDelLoading(true);
-    const toastId = toast.loading("Deleting task(s)...");
 
     try {
-      let res;
-
-      if (selectedIds.length === 1) {
-        res = await API.delete(`/delete-task/${selectedIds[0]}`);
-      } else {
-        res = await API.delete(`/delete-multiple-tasks`, {
-          data: { ids: selectedIds }
-        });
-      }
-
-      // Update UI only after success
-      setTasks(prev => prev.filter(t => !selectedIds.includes(t._id)));
-      setSelectedIds([]);
+      await execute(
+        () => {
+          if (selectedIds.length === 1) {
+            return API.delete(`/user/delete-task/${selectedIds[0]}`);
+          } else {
+            return API.delete(`/user/delete-multiple-tasks`, {
+              data: { ids: selectedIds },
+            });
+          }
+        },
+        {
+          loadingMessage: "Deleting task(s)...",
+          successMessage: "Deleted successfully!",
+          onSuccess: () => {
+            // Update UI only after success
+            setTasks((prev) =>
+              prev.filter((t) => !selectedIds.includes(t._id))
+            );
+            setSelectedIds([]);
+          },
+        }
+      );
+    } finally {
       setDelLoading(false);
       setShowDeleteModal(false);
-
-      toast.update(toastId, {
-        render: res.data.message || "Deleted successfully!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000
-      });
-
-    } catch (err) {
-      setDelLoading(false);
-      toast.update(toastId, {
-        render:
-          err.response?.data?.message ||
-          "Something went wrong while deleting",
-        type: "error",
-        isLoading: false,
-        autoClose: 4000
-      });
-
-      console.error(err);
     }
   };
 
 
   const completeTask = async (id) => {
-    const toastId = toast.loading("Marking task as completed...");
-
-    try {
-      const res = await API.patch(`/mark-completed/${id}`);
-
-      // Update local state after success
-      setTasks(prev =>
-        prev.map(t =>
-          t._id === id ? { ...t, status: res.data.data.status, dateCompleted: res.data.data.dateCompleted } : t
-        )
-      );
-
-      toast.update(toastId, {
-        render: res.data.message || "Task marked completed!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000
-      });
-
-    } catch (err) {
-      console.error(err);
-
-      toast.update(toastId, {
-        render: err.response?.data?.message || "Failed to complete task",
-        type: "error",
-        isLoading: false,
-        autoClose: 4000
-      });
-    }
+    await execute(
+      () => API.patch(`/user/mark-completed/${id}`),
+      {
+        loadingMessage: "Marking task as completed...",
+        successMessage: "Task marked completed!",
+        onSuccess: (res) => {
+          // Update local state after success
+          setTasks((prev) =>
+            prev.map((t) =>
+              t._id === id
+                ? {
+                  ...t,
+                  status: res.data.data.status,
+                  dateCompleted: res.data.data.dateCompleted,
+                }
+                : t
+            )
+          );
+        },
+      }
+    );
   };
 
 
@@ -283,7 +267,7 @@ const TaskManager = ({ tasks, setTasks }) => {
                             </div>
                           </div>
                           <div>
-                            <div className="fw-bold text-dark">{task.title}</div>
+                            <div className="fw-bold text-dark text-truncate" style={{ maxWidth: '300px' }}>{task.title}</div>
                             <div className="text-muted small text-truncate" style={{ maxWidth: '300px' }}>{task.desc}</div>
                             <div className="x-small text-secondary mt-1" style={{ fontSize: '11px' }}>
                               Created: {smartDate(task.createdAt, now)}
