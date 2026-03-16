@@ -159,27 +159,36 @@ export const markTaskCompleted = async (req, res) => {
     const userId = req.userInfo.userId;
     const { id: taskId } = req.params;
 
-    const updatedTask = await Task.findOneAndUpdate(
-      {
-        _id: taskId,
-        owner: userId,
-        status: { $ne: "completed" } // prevents double-complete
-      },
-      { status: "completed" },
-      { new: true, runValidators: true }
-    );
+    const task = await Task.findOne({ _id: taskId, owner: userId });
 
-    if (!updatedTask) {
-      return res.status(404).json({
-        success: false,
-        message: "Task not found or already completed"
+    if (!task) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Task not found" 
       });
     }
+
+    if (task.status === "completed") {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Task already completed" 
+      });
+    }
+
+    if (task.status !== "pending") {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Only pending tasks can be marked as completed" 
+      });
+    }
+
+    task.status = "completed";
+    await task.save();
 
     res.status(200).json({
       success: true,
       message: "Task marked as completed",
-      data: updatedTask
+      data: task
     });
 
   } catch (error) {
@@ -206,45 +215,64 @@ export const editTask = async (req, res) => {
     const { id: taskId } = req.params;
     const { title, desc } = req.body || {};
 
-    const updateFields = {};
-    if (title !== undefined) updateFields.title = title.trim();
-    if (desc !== undefined) updateFields.desc = desc;
-
-    if (Object.keys(updateFields).length === 0) {
+    if (!title && !desc) {
       return res.status(400).json({
         success: false,
         message: "No fields provided for update"
       });
     }
 
-    // 🔥 Only run duplicate check if title is being changed
-    if (updateFields.title) {
-      const conflict = await Task.findOne({
-        owner: userId,
-        title: updateFields.title,
-        _id: { $ne: taskId } // ignore the task being edited
-      });
+    // Fetch the task first
+    const task = await Task.findOne({ _id: taskId, owner: userId });
 
-      if (conflict) {
-        return res.status(400).json({
-          success: false,
-          message: "You already have another task with this title"
-        });
-      }
-    }
-
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, owner: userId },
-      { $set: updateFields },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedTask) {
+    if (!task) {
       return res.status(404).json({
         success: false,
         message: "Task not found or not yours"
       });
     }
+
+    // Block editing if completed or verified
+    if (task.status === "completed" || task.status === "verified") {
+      return res.status(400).json({
+        success: false,
+        message: "Completed or verified tasks cannot be edited"
+      });
+    }
+
+    const updateFields = {};
+
+    if (title !== undefined) {
+      const trimmedTitle = title.trim();
+
+      // Duplicate check only if title changes
+      if (trimmedTitle !== task.title) {
+        const conflict = await Task.findOne({
+          owner: userId,
+          title: trimmedTitle,
+          _id: { $ne: taskId }
+        });
+
+        if (conflict) {
+          return res.status(400).json({
+            success: false,
+            message: "You already have another task with this title"
+          });
+        }
+      }
+
+      updateFields.title = trimmedTitle;
+    }
+
+    if (desc !== undefined) {
+      updateFields.desc = desc;
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    );
 
     res.status(200).json({
       success: true,
@@ -269,4 +297,99 @@ export const editTask = async (req, res) => {
   }
 };
 
+// admin mark a task as verified
+export const markTaskVerified = async (req, res) => {
+  try {
+    const { taskId } = req.params;
 
+    const task = await Task.findOne({ _id: taskId });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found"
+      });
+    }
+
+    if (task.status === "verified") {
+      return res.status(400).json({
+        success: false,
+        message: "Task already verified"
+      });
+    }
+
+    if (task.status !== "completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Only completed tasks can be verified"
+      });
+    }
+
+    task.status = "verified";
+    await task.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Task marked as verified",
+      data: task
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid task ID"
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+// Admin delete a task
+export const adminDeleteTask = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found"
+      });
+    }
+
+    if (task.status !== "verified") {
+      return res.status(400).json({
+        success: false,
+        message: "Only verified tasks can be deleted"
+      });
+    }
+
+    await task.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Task deleted successfully"
+    });
+
+  } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid task ID"
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};

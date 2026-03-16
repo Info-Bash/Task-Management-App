@@ -189,22 +189,24 @@ const UserManagement = () => {
                     <button
                       className="btn btn-sm btn-light py-0 px-1 border-0"
                       data-bs-toggle="dropdown"
-                      style={{ fontSize: '1.2rem', lineHeight: '1' }}
                     >
-                      ⋮
+                      <i className="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul className="dropdown-menu dropdown-menu-end shadow-sm small">
                       <li>
                         {user.isActive ? (
-                          <button className="dropdown-item" onClick={() => handleUserActivation(user.isActive, user._id)}>Suspend User</button>
+                          <button className="dropdown-item" onClick={() => handleUserActivation(user.isActive, user._id)}>
+                            <i className="bi bi-shield-plus me-2"></i>Suspend User</button>
                         ) : (
-                          <button className="dropdown-item" onClick={() => handleUserActivation(user.isActive, user._id)}>Activate User</button>
+                          <button className="dropdown-item" onClick={() => handleUserActivation(user.isActive, user._id)}> <i className="bi bi-shield-minus me-2"></i>Activate User</button>
                         )}
                       </li>
                       <li>{user.role === 'admin' ? (
-                        <button className="dropdown-item" onClick={() => handleUserRole(user.role, user._id)}>Remove Admin</button>
+                        <button className="dropdown-item" onClick={() => handleUserRole(user.role, user._id)}>
+                          <i className="bi bi-x-circle me-2"></i>Remove Admin</button>
                       ) : (
-                        <button className="dropdown-item" onClick={() => handleUserRole(user.role, user._id)}>Make Admin</button>)}</li>
+                        <button className="dropdown-item" onClick={() => handleUserRole(user.role, user._id)}>
+                          <i className="bi bi-person-badge me-2"></i>Make Admin</button>)}</li>
 
                       <li><hr className="dropdown-divider" /></li>
 
@@ -214,7 +216,7 @@ const UserManagement = () => {
                           setDeleteUserName(user.username);
                           setShowDeleteModal(true);
                         }}
-                      >Delete User</button></li>
+                      > <i className="bi bi-trash me-2"></i>Delete User</button></li>
                     </ul>
                   </div>
 
@@ -234,7 +236,7 @@ const UserManagement = () => {
                     </p>
                     {!user.isActive && (
                       <div className="small text-muted">
-                        <i className="bi bi-exclamation-triangle-fill text-danger me-1"></i>
+                        <i className="bi bi-shield-fill-plus text-danger me-1"></i>
                         Suspended
                       </div>
                     )}

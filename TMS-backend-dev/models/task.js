@@ -17,18 +17,13 @@ const taskSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ['pending', 'completed'],
+    enum: ['pending', 'completed', 'verified'],
     default: 'pending',
   },
 
   dateCompleted: {
     type: Date,
     default: null
-  },
-
-  verified: {
-    type: Boolean,
-    default: false
   },
 
   dateVerified: {
@@ -46,38 +41,30 @@ const taskSchema = new mongoose.Schema({
 
 // Auto set completion date
 taskSchema.pre("save", function () {
-  if (this.status === "completed" && !this.dateCompleted) {
-    this.dateCompleted = new Date();
+  if (this.isModified("status")) {
+    if (this.status === "completed" && !this.dateCompleted) {
+      this.dateCompleted = new Date();
+    }
+
+    if (this.status === "verified" && !this.dateVerified) {
+      this.dateVerified = new Date();
+    }
   }
 
-  if (this.verified && !this.dateVerified) {
-    this.dateVerified = new Date();
-  } 
 });
-
 
 taskSchema.pre("findOneAndUpdate", function () {
   const update = this.getUpdate();
-
-  // Handle $set or direct updates
   const status = update.status || update.$set?.status;
-  const verified = update.verified ?? update.$set?.verified;
 
   if (status === "completed") {
-    if (update.$set) {
-      update.$set.dateCompleted = new Date();
-    } else {
-      update.dateCompleted = new Date();
-    }
+    update.$set = { ...update.$set, dateCompleted: new Date() };
   }
 
-  if (verified === true) {
-    if (update.$set) {
-      update.$set.dateVerified = new Date();
-    } else {
-      update.dateVerified = new Date();
-    }
+  if (status === "verified") {
+    update.$set = { ...update.$set, dateVerified: new Date() };
   }
+
 });
 
 

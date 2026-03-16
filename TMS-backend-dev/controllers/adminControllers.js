@@ -179,10 +179,6 @@ export const getAllTasksAdmin = async (req, res) => {
       {
         $facet: {
           tasks: [
-            { $sort: { createdAt: -1 } },
-            { $skip: skip },
-            { $limit: limit },
-
             {
               $addFields: {
                 ownerUsername: "$ownerInfo.username",
@@ -230,6 +226,10 @@ export const getAllTasksAdmin = async (req, res) => {
                 }
               }
             },
+
+            { $sort: { displayTime: -1 } },
+            { $skip: skip },
+            { $limit: limit },
 
             {
               $project: {

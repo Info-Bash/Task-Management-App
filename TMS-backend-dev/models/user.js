@@ -16,11 +16,11 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Username is required'],
-    minlength: [4, 'Username too short'],
+    minlength: [3, 'Username too short'],
     maxlength: [20, 'Username too long'],
     match: [
-      /^[a-zA-Z0-9](?!.*__)[a-zA-Z0-9_]{2,18}[a-zA-Z0-9]$/,
-      'Username: 4–20 characters, letters/numbers only at start/end, underscores allowed but no __.'
+      /^[a-zA-Z0-9](?!.*__)[a-zA-Z0-9_]{1,18}[a-zA-Z0-9]$/,
+      'Username: 3–20 characters, letters/numbers only at start/end, underscores allowed but no __.'
     ],
     unique: true,
     trim: true,
@@ -123,8 +123,6 @@ userSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-
-userSchema.index({ username: 1 });
 userSchema.index({ role: 1 });
 
 

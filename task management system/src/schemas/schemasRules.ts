@@ -8,10 +8,10 @@ export const REGISRULES = {
   },
 
   USER_NAME: {
-    min: 4,
+    min: 3,
     max: 20,
-    regex: /^[a-zA-Z0-9](?!.*__)[a-zA-Z0-9_]{2,18}[a-zA-Z0-9]$/,
-    error: "Username: 4–20 characters, letters/numbers only at start/end, underscores allowed but no __."
+    regex: /^[a-zA-Z0-9](?!.*__)[a-zA-Z0-9_]{1,18}[a-zA-Z0-9]$/,
+    error: "Username: 3–20 characters, letters/numbers only at start/end, underscores allowed but no __."
   },
 
   AGE: {

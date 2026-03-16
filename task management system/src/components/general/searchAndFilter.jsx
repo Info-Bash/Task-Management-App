@@ -60,7 +60,7 @@ const FilterBar = ({
           </select>
 
           {/* Active status filter */}
-          {activeFilterValue &&  
+          {activeFilterValue &&
             <select
               className="form-select form-select-sm border-0 bg-light fw-semibold"
               style={{ width: 'auto', cursor: 'pointer' }}
@@ -78,10 +78,11 @@ const FilterBar = ({
 
           <button
             className="btn btn-sm btn-primary border-0 px-2"
-            onClick={() => { 
-              setSearch(''); 
-              setFilterValue(options[0].value); 
-              setActiveFilterValue(activeOptions[0]?.value || '');
+            onClick={() => {
+              setSearch('');
+              setFilterValue(options?.[0]?.value || '');
+              setActiveFilterValue?.(activeOptions?.[0]?.value || '');
+              setPage(1);
             }}
             title="Reset Filters"
           >

@@ -46,7 +46,7 @@ const TaskManager = ({ tasks, setTasks }) => {
     if (activeTab === 'pending') return task.status === 'pending';
     // Exclude verified tasks from the general completed tab to keep them separate
     if (activeTab === 'completed') return task.status === 'completed';
-    if (activeTab === 'verified') return task.status === 'completed' && task.verified;
+    if (activeTab === 'verified') return task.status === 'verified';
     return true;
   });
 
@@ -188,7 +188,7 @@ const TaskManager = ({ tasks, setTasks }) => {
             className={`btn px-3 px-md-4 py-3 fw-bold rounded-0 flex-fill text-nowrap ${activeTab === 'verified' ? 'border-bottom border-2 border-primary text-primary' : 'text-muted'}`}
             onClick={() => { setActiveTab('verified'); setSelectedIds([]); }}
           >
-            VERIFIED <span className="badge bg-info ms-1">{tasks.filter(t => t.status === 'completed' && t.verified).length}</span>
+            VERIFIED <span className="badge bg-info ms-1">{tasks.filter(t => t.status === 'verified').length}</span>
           </button>
         </div>
 
