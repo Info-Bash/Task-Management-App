@@ -3,7 +3,7 @@ import homeController from '../controllers/home.js';
 import authMiddleWare from '../middlewares/authMiddleware.js';
 import checkSuspended from '../middlewares/suspendedMiddleware.js';
 import { userProfileController, userProfileUpdateController } from '../controllers/userProfile.js';
-import { createTask, getAllUserTasks, deleteTask, deleteMultipleTasks, markTaskCompleted, editTask } from '../controllers/taskControllers.js';
+import { createTask, getAllUserTasks, getSingleUserTask, deleteTask, deleteMultipleTasks, markTaskCompleted, editTask } from '../controllers/taskControllers.js';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.use(checkSuspended);
 router.put('/update-profile/:id', userProfileUpdateController);
 router.post('/create-task', createTask);
 router.get('/tasks', getAllUserTasks);
+router.get('/task/:id', getSingleUserTask);
 router.delete("/delete-task/:id", deleteTask);
 router.delete("/delete-multiple-tasks", deleteMultipleTasks);
 router.patch("/mark-completed/:id", markTaskCompleted);

@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../../api/api";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import Nav from "../../components/general/nav";
 import PageHeader from "../../components/general/header";
 import ProfileSidebar from "../../components/general/profileSideBar";
@@ -8,17 +7,22 @@ import UserManagement from "../../components/admin/userManagement";
 import AdminTaskManager from "../../components/admin/adminTaskManagemengt";
 
 function AdminPage() {
-
+  const {
+        userProfile,
+        handleUpdateUser,
+        logout
+      } = useAuth();
+      
   const [showSidebar, setShowSidebar] = useState(false);
-  const [user, setUser] = useState(() => {
+  /* const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
-  });
-  const [userProfile, setUserProfile] = useState(null);
+  }); */
+  //const [userProfile, setUserProfile] = useState(null);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await API.get("/user/me");
@@ -33,10 +37,10 @@ function AdminPage() {
     };
 
     fetchUser();
-  }, [navigate]);
+  }, [navigate]); */
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!user || !user._id) return;
     const fetchUserProfile = async () => {
       try {
@@ -49,22 +53,22 @@ function AdminPage() {
 
     fetchUserProfile();
 
-  }, [user]);
+  }, [user]); */
 
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
 
   /* User profile Update  */
-  const handleUpdateUser = async (updatedData) => {
+  /* const handleUpdateUser = async (updatedData) => {
     const res = await API.put(`/admin/update-profile/${user._id}`, updatedData);
 
     const updatedUser = res.data.user;
     setUserProfile(updatedUser);
 
     return res.data; // success only
-  };
+  }; */
 
   // Log out user
-  const handleLogout = () => {
+  /* const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
@@ -72,7 +76,7 @@ function AdminPage() {
     setUserProfile(null);
 
     navigate("/login");
-  };
+  }; */
 
   return (
     <>
@@ -92,7 +96,7 @@ function AdminPage() {
         handleClose={() => setShowSidebar(false)}
         user={userProfile}
         onSave={handleUpdateUser}
-        onLogout={handleLogout}
+        onLogout={logout}
       />
 
       {showSidebar && <div className="offcanvas-backdrop fade show" onClick={() => setShowSidebar(false)}></div>}

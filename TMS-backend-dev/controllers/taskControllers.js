@@ -80,6 +80,39 @@ export const getAllUserTasks = async (req, res) => {
   }
 };
 
+/* Get a single user task */
+export const getSingleUserTask = async (req, res) => {
+  try {
+    const userId = req.userInfo.userId;
+    const { id: taskId } = req.params;
+
+    const task = await Task.findOne({ 
+      _id: taskId, 
+      owner: userId 
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found or not yours"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Task retrieved successfully",
+      data: task
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
 /* Delete a Task */
 export const deleteTask = async (req, res) => {
   try {
@@ -105,6 +138,7 @@ export const deleteTask = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Get single task error:", error.message);
     res.status(500).json({
       success: false,
       message: "Server error"

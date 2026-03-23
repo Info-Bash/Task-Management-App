@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ConfirmationModal } from '../general/confirmationModal';
 import { EditingTask } from './editingTask';
-import { ViewTask } from '../general/viewingTask';
 import { smartDate } from '../../utils/dateFormat';
 import ActionDropdown from '../general/floatingDropdown';
 import useApiWithToast from '../../hooks/useApiWithToast';
@@ -16,7 +15,6 @@ const TaskManager = ({ tasks, setTasks }) => {
   const [delLoading, setDelLoading] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [activeDropdownId, setActiveDropdownId] = useState(null); // Track which dropdown is open
-  const [viewingTask, setViewingTask] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
 
   // Custom hook for API calls with toast notifications
@@ -285,7 +283,7 @@ const TaskManager = ({ tasks, setTasks }) => {
                             onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
                             onClose={() => setActiveDropdownId(null)}
                             onComplete={() => completeTask(task._id)}
-                            onView={() => setViewingTask(task)}
+                            onView={task._id}
                             onEdit={() => setEditingTask(task)}
                             onDelete={() => triggerSingleDelete(task._id)}
                           />
@@ -294,7 +292,7 @@ const TaskManager = ({ tasks, setTasks }) => {
                             isOpen={activeDropdownId === task._id}
                             onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
                             onClose={() => setActiveDropdownId(null)}
-                            onView={() => setViewingTask(task)}
+                            onView={task._id}
                             onDelete={() => triggerSingleDelete(task._id)}
                           />
                         )}
@@ -314,7 +312,10 @@ const TaskManager = ({ tasks, setTasks }) => {
         isOpen={showDeleteModal}
         loading={delLoading}
         icon="⚠️"
-        onClose={() => setShowDeleteModal(false)}
+        onClose={() => {
+          setShowDeleteModal(false)
+          setSelectedIds([])
+        }}
         onConfirm={confirmDelete}
         title="Confirm Delete"
         message="Are you sure you want to delete"
@@ -325,17 +326,17 @@ const TaskManager = ({ tasks, setTasks }) => {
       />
 
       {/* VIEW TASK MODAL */}
-      {viewingTask && (
+      {/* {viewingTask && (
         <ViewTask
           task={viewingTask}
           onClose={() => setViewingTask(null)}
           onEdit={() => {
-            setEditingTask(viewingTask); // Switch to edit mode
-            setViewingTask(null);        // Close view mode
+            setEditingTask(viewingTask); Switch to edit mode
+            setViewingTask(null);         Close view mode
           }}
           showEditButton={activeTab === 'pending'}
         />
-      )}
+      )} */}
 
       {/* EDIT TASK MODAL */}
       {editingTask && (

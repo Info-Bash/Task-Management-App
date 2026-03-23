@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 import { authSchema } from '../../schemas/auth.schema';
 import { handleKeyDown } from '../../hooks/handleKeyDown';
 import { useFormHandler } from '../../hooks/useFormHandler';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { InputField } from '../registrationForm/formInputField';
-import API from '../../api/api';
+import { useAuth } from '../../hooks/useAuth';
 
 interface LoginResponse {
   accessToken: string;
@@ -20,6 +20,11 @@ export function LoginForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof typeof formData, string>>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const location = useLocation();
+  const from = location.state?.from?.pathname;
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -70,14 +75,8 @@ export function LoginForm() {
 
     try {
       isSetSubmitLoading(true);
-      const res = await API.post<LoginResponse>("/auth/login", formData);
-
-      // Save token
-      localStorage.setItem("token", res.data.accessToken);
-
-      // Immediately fetch user
-      const me = await API.get("/user/me");
-      localStorage.setItem("user", JSON.stringify(me.data.user));
+      
+      await login(formData, from);
 
       // Reset form input fields and errors
       setFormData({
@@ -87,12 +86,6 @@ export function LoginForm() {
 
       setErrors({});
       setTouched({});
-
-      if (me.data.user.role === "admin") {
-        navigate("/admin-dashboard");
-      } else {
-        navigate("/user-dashboard");
-      }
 
     } catch (e: unknown) {
 

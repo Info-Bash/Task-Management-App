@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../../api/api";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import Nav from "../../components/general/nav";
 import PageHeader from "../../components/general/header";
 import ProfileSidebar from "../../components/general/profileSideBar";
@@ -11,18 +10,19 @@ import "./userPage.css";
 
 
 export function UserPage() {
+  const {
+    userProfile,
+    handleUpdateUser,
+    logout
+  } = useAuth()
+
   const [showSidebar, setShowSidebar] = useState(false);
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  const [userProfile, setUserProfile] = useState(null);
 
   const [tasks, setTasks] = useState([]);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await API.get("/user/me");
@@ -37,10 +37,10 @@ export function UserPage() {
     };
 
     fetchUser();
-  }, [navigate]);
+  }, [navigate]); */
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!user || !user._id) return;
     const fetchUserProfile = async () => {
       try {
@@ -53,21 +53,21 @@ export function UserPage() {
 
     fetchUserProfile();
 
-  }, [user]);
+  }, [user]); */
 
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
 
   /* User profile Update  */
-  const handleUpdateUser = async (updatedData) => {
+  /* const handleUpdateUser = async (updatedData) => {
     const res = await API.put(`/user/update-profile/${user._id}`, updatedData);
 
     const updatedUser = res.data.user;
     setUserProfile(updatedUser);
 
     return res.data; // success only
-  };
+  }; */
 
-  // Log out user
+  /* // Log out user
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -76,7 +76,7 @@ export function UserPage() {
     setUserProfile(null);
 
     navigate("/login");
-  };
+  }; */
 
 
   return (
@@ -97,7 +97,7 @@ export function UserPage() {
         handleClose={() => setShowSidebar(false)}
         user={userProfile}
         onSave={handleUpdateUser}
-        onLogout={handleLogout}
+        onLogout={logout}
       />
 
 

@@ -1,7 +1,8 @@
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 
-function ActionDropdown({ 
+function ActionDropdown({
   isOpen,
   onToggle,
   onClose,
@@ -63,26 +64,33 @@ function ActionDropdown({
               margin: 0
             }}
           >
-            
-          {onView && (
-            <li><button className="dropdown-item" onClick={onView}>View Task</button></li>
-          )}
 
-          {onEdit && (
-            <li><button className="dropdown-item" onClick={onEdit}>Edit Task</button></li>
-          )}
+            {onView && (
+              <li>
+                <Link
+                  to={`/view-task/${onView}`}
+                  className="dropdown-item text-decoration-none"
+                >
+                  View Task
+                </Link>
+              </li>
+            )}
 
-          {onComplete && (
-            <li><button className="dropdown-item" onClick={onComplete}>Mark Completed</button></li>
-          )}
+            {onEdit && (
+              <li><button className="dropdown-item" onClick={onEdit}>Edit Task</button></li>
+            )}
 
-          {onDelete && (onView || onEdit || onComplete) && (
-            <li><hr className="dropdown-divider" /></li>
-          )}
+            {onComplete && (
+              <li><button className="dropdown-item" onClick={onComplete}>Mark Completed</button></li>
+            )}
 
-          {onDelete && (
-            <li><button className="dropdown-item text-danger" onClick={onDelete}>Delete</button></li>
-          )}
+            {onDelete && (onView || onEdit || onComplete) && (
+              <li><hr className="dropdown-divider" /></li>
+            )}
+
+            {onDelete && (
+              <li><button className="dropdown-item text-danger" onClick={onDelete}>Delete</button></li>
+            )}
           </ul>,
           document.body
         )}
