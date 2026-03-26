@@ -6,7 +6,7 @@ import { handleKeyDown } from "../../hooks/handleKeyDown";
 import { ConfirmationModal } from "../general/confirmationModal";
 import API from "../../api/api";
 
-export function CreateTask( { setTasks } ) {
+export function CreateTask ( {setTasks} ) {
   const [createTaskVisible, setCreateTaskVisible] = useState(false);
   const taskRef = useRef(null);
   const [taskData, setTaskData] = useState({

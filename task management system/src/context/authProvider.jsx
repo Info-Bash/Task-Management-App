@@ -14,6 +14,8 @@ const AuthProvider = ({ children }) => {
     };
 
     initAuth();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [user, setUser] = useState(null);
@@ -22,16 +24,24 @@ const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
 
-  // fetch user and stores user 
+  // fetch user and stores user
+
+  useEffect(() => {
+    setupInterceptors(logout);
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setUser(null);
-        return;
-      }
-
       const res = await API.get("/user/me");
       setUser(res.data.user);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -115,7 +125,11 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/login");
+
+    // prevent navigation if already on login page
+    if (window.location.pathname !== "/login") {
+      navigate("/login");
+    }
   };
 
   return (

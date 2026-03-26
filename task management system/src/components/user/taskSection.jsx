@@ -6,12 +6,12 @@ import ActionDropdown from '../general/floatingDropdown';
 import useApiWithToast from '../../hooks/useApiWithToast';
 import API from '../../api/api';
 
-const TaskManager = ({ tasks, setTasks }) => {
-  const [activeTab, setActiveTab] = useState('pending'); // 'pending' or 'completed'
+const TaskManager = ({ tasks, setTasks, error, loading }) => {
+
+  const [activeTab, setActiveTab] = useState('pending');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  
   const [delLoading, setDelLoading] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [activeDropdownId, setActiveDropdownId] = useState(null); // Track which dropdown is open
@@ -19,24 +19,6 @@ const TaskManager = ({ tasks, setTasks }) => {
 
   // Custom hook for API calls with toast notifications
   const { execute } = useApiWithToast();
-
-  useEffect(() => {
-    const fetchUserTasks = async () => {
-      try {
-        setLoading(true);
-        const res = await API.get(`/user/tasks`);
-        setTasks(res.data.data);
-        setError("");
-      } catch (e) {
-        console.error("Error fetching user tasks:", e);
-        setError("Failed to load tasks. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserTasks();
-  }, [setTasks]);
 
 
   /* const filteredTasks = tasks.filter(t => t.status === activeTab); */

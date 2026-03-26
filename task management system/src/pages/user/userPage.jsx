@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import API from "../../api/api";
 import Nav from "../../components/general/nav";
 import PageHeader from "../../components/general/header";
 import ProfileSidebar from "../../components/general/profileSideBar";
@@ -17,67 +18,30 @@ export function UserPage() {
   } = useAuth()
 
   const [showSidebar, setShowSidebar] = useState(false);
-
-  const [tasks, setTasks] = useState([]);
-
-  //const navigate = useNavigate();
-
-  /* useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await API.get("/user/me");
-        setUser(res.data.user);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-      } catch (err) {
-        console.error("Not authenticated", err);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-      }
-    };
-
-    fetchUser();
-  }, [navigate]); */
-
-
-  /* useEffect(() => {
-    if (!user || !user._id) return;
-    const fetchUserProfile = async () => {
-      try {
-        const res = await API.get(`/user/profile/${user._id}`);
-        setUserProfile(res.data.user);
-      } catch (e) {
-        console.log("Error fetching user profile:", e);
-      }
-    }
-
-    fetchUserProfile();
-
-  }, [user]); */
-
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
 
-  /* User profile Update  */
-  /* const handleUpdateUser = async (updatedData) => {
-    const res = await API.put(`/user/update-profile/${user._id}`, updatedData);
+  // Task state management
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    const updatedUser = res.data.user;
-    setUserProfile(updatedUser);
+  // Fetch user task
+  const fetchUserTasks = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get(`/user/tasks`);
+      setTasks(res.data.data); setError("");
+    } catch (e) {
+      console.error("Error fetching user tasks:", e);
+      setError("Failed to load tasks. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return res.data; // success only
-  }; */
-
-  /* // Log out user
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setUser(null);
-    setUserProfile(null);
-
-    navigate("/login");
-  }; */
-
+  useEffect(() => {
+    fetchUserTasks();
+  }, []);
 
   return (
     <>
@@ -113,6 +77,8 @@ export function UserPage() {
       <TaskManager
         tasks={tasks}
         setTasks={setTasks}
+        loading={loading}
+        error={error}
       />
     </>
   );

@@ -1,6 +1,5 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from "react";
 import PublicRoute from './routes/publicRoute';
 import ProtectedRoute from './routes/protectedRoute';
 import { RegistrationPage } from './pages/registration/registrationPage';
@@ -13,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
 
   return (
     <>
@@ -43,7 +41,7 @@ function App() {
           path="user-dashboard"
           element={
             <ProtectedRoute allowedRoles={["user"]}>
-              <UserPage tasks={tasks} setTasks={setTasks} />
+              <UserPage />
             </ProtectedRoute>
           }
         />
