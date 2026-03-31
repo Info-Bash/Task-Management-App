@@ -16,7 +16,7 @@ export const userProfileController = async (req, res) => {
       user: userData
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
       message: 'Server error'

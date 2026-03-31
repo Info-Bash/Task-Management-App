@@ -17,7 +17,7 @@ const authMiddleWare = async (req, res, next) => {
     req.userInfo = decodedToken
     next();
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
       message: 'Access Denied, no token provided'

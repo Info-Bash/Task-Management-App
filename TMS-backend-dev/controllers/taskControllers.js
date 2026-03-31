@@ -83,18 +83,16 @@ export const getAllUserTasks = async (req, res) => {
 /* Get a single user task */
 export const getSingleUserTask = async (req, res) => {
   try {
-    const userId = req.userInfo.userId;
     const { id: taskId } = req.params;
 
     const task = await Task.findOne({ 
-      _id: taskId, 
-      owner: userId 
+      _id: taskId
     });
 
     if (!task) {
       return res.status(404).json({
         success: false,
-        message: "Task not found or not yours"
+        message: "Task not found"
       });
     }
 

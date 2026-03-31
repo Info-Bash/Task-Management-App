@@ -100,7 +100,7 @@ const AuthProvider = ({ children }) => {
         const res = await API.get(`/user/profile/${user._id}`);
         setUserProfile(res.data.user);
       } catch (e) {
-        console.log("Error fetching user profile:", e);
+        console.error("Error fetching user profile:", e);
       }
     }
 

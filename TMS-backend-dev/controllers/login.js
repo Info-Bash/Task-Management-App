@@ -49,7 +49,7 @@ const loginController = async (req, res) => {
     })
 
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     /* General Error */
     res.status(500).json({

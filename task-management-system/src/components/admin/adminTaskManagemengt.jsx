@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FilterBar from '../general/searchAndFilter';
 import Pagination from '../general/pagination';
 import API from "../../api/api"
@@ -8,6 +9,7 @@ import useApiWithToast from '../../hooks/useApiWithToast';
 import { ConfirmationModal } from '../general/confirmationModal';
 
 const AdminTaskManager = () => {
+  const navigate = useNavigate();
   // State for server-side logic
   const [tasks, setTasks] = useState([]);
   const [now, setNow] = useState(() => Date.now());
@@ -22,6 +24,10 @@ const AdminTaskManager = () => {
   // State for confirmation modal
   const [confirming, setConfirming] = useState(false);
   const [modal, setModal] = useState(null);
+
+  const handleView = (taskId) => {
+    navigate(`/task/${taskId}/view`);
+  };
 
   // API hook for actions with toast notifications
   const { execute } = useApiWithToast();
@@ -44,8 +50,6 @@ const AdminTaskManager = () => {
       // Full API: /api/tasks?page=2&limit=10&search=report&status=completed
       const response = await API.get(`/admin/tasks${query}`);
       const data = response.data;
-
-      console.log('response data:', data);
 
       setTasks(data.tasks || []);
       setTotalTasks(data.totalTasks || 0);
@@ -228,7 +232,14 @@ const AdminTaskManager = () => {
                                 <i className="bi bi-three-dots-vertical"></i>
                               </button>
                               <ul className="dropdown-menu dropdown-menu-end shadow border-0">
-                                <li><button className="dropdown-item py-2"><i className="bi bi-eye me-2"></i>View Details</button></li>
+                                <li>
+                                  <button
+                                  onClick={() => handleView(task._id)}
+                                  className="dropdown-item py-2"
+                                >
+                                  <i className="bi bi-eye me-2"></i>View Details
+                                </button>
+                                </li>
                                 {task.status === 'completed' && (
                                   <li><button className="dropdown-item py-2" onClick={() => {
                                     setModal(prev => ({

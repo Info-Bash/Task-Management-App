@@ -14,7 +14,7 @@ const homeController = async (req, res) => {
       user
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).json({
       success: false,
       message: "Server error"

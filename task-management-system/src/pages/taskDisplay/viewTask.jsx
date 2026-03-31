@@ -33,6 +33,9 @@ export function ViewTask() {
   const taskId = task?._id;
   const showEditButton = task?.status === "pending";
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const notAdmin = user.role === "user";
+
   return (
     /* Main task view content area */
     <div className="bg-white p-4 mb-3 rounded-3 border-sm shadow-sm">
@@ -49,7 +52,7 @@ export function ViewTask() {
             Back
           </button>
 
-          {showEditButton && (
+          {showEditButton && notAdmin && (
             <Link
               to={`/task/${taskId}/edit`}
               className="btn btn-primary btn-sm px-3"
