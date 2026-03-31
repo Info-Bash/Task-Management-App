@@ -5,7 +5,10 @@ import ProtectedRoute from './routes/protectedRoute';
 import { RegistrationPage } from './pages/registration/registrationPage';
 import { LoginPage } from './pages/login/loginPage';
 import { UserPage } from './pages/user/userPage';
-import { ViewTask } from './pages/viewTask';
+import { TaskLayout } from './pages/taskDisplay/taskLayout';
+import { EditTask } from './pages/taskDisplay/editTask';
+import { ViewTask } from './pages/taskDisplay/viewTask';
+//import { ViewTask } from './pages/viewTask';
 import AdminPage from './pages/admin/adminpage';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -47,13 +50,17 @@ function App() {
         />
 
         <Route
-          path="view-task/:id"
+          path="task/:id"
           element={
             <ProtectedRoute>
-              <ViewTask />
+              <TaskLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<Navigate to="view" replace />}/>
+          <Route path='view' element={<ViewTask />} />
+          <Route path='edit' element={<EditTask />}/>
+        </Route>
 
         <Route path='admin-dashboard' element={
           <ProtectedRoute allowedRoles={["admin"]} >

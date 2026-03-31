@@ -238,16 +238,20 @@ export function CreateTask ( {setTasks} ) {
           </div>
         ) : (
           /* Create Task Button */
-          <div className="d-flex justify-content-center my-4">
-            <div
-              className="card align-items-center cursor-pointer p-4 task-add-card"
-              onClick={() => setCreateTaskVisible(true)}
-              style={{ cursor: 'pointer', width: '200px' }}
-            >
-              <img src="plus-circle-dotted.svg" width={100} alt="Add" title="Add New Task" />
-              <span className="mt-2 fw-bold text-primary">Add Task</span>
-            </div>
-          </div>
+          <div className="d-flex justify-content-center my-5">
+  <button 
+    type="button"
+    className="btn task-add-card d-flex flex-column align-items-center justify-content-center p-4"
+    onClick={() => setCreateTaskVisible(true)}
+  >
+    <div className="icon-wrapper mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-plus-circle-dotted text-primary" viewBox="0 0 16 16">
+        <path d="M8 0q-.264 0-.523.017l.064.998a7 7 0 0 1 .918 0l.064-.998A8 8 0 0 0 8 0M6.44.152q-.52.104-1.012.27l.321.948q.424-.144.873-.233zM4.99.904q-.48.225-.911.51l.544.837c.37-.245.78-.439 1.188-.631zm-1.55 1.116q-.413.33-.77.711l.728.687q.308-.328.663-.612zM1.916 3.55q-.312.427-.563.89l.885.468q.217-.398.487-.765zM.904 4.99q-.225.48-.51.911l.837.544c.245-.37.439-.78.631-1.188zM.152 6.44q-.104.52-.152 1.012l.998.064q.041-.43.12-.855zm.017 2.037q.017.523.104 1.012l.948-.321q-.074-.424-.089-.873zM.904 11.01q.225.48.51.911l.837-.544c-.245.37-.439.78-.631 1.188zM3.55 14.084q.427.312.89.563l.468-.885q-.398-.217-.765-.487zm2.89 1.764q.52.104 1.012.152l.064-.998q-.43-.041-.855-.12zM8 16q.264 0 .523-.017l-.064-.998a7 7 0 0 1-.918 0l-.064.998A8 8 0 0 0 8 16m1.56-.152q.52-.104 1.012-.27l-.321-.948a7 7 0 0 1-.873.233zM11.01 15.096q.48-.225.911-.51l-.544-.837a7 7 0 0 1-1.188.631zm1.55-1.116q.413-.33.77-.711l-.728-.687a7 7 0 0 1-.663.612zm1.524-2.43q.312-.427.563-.89l-.885-.468a7 7 0 0 1-.487.765zm1.012-1.55q.225-.48.51-.911l-.837-.544a7 7 0 0 1-.631 1.188zm.752-2.56q.104-.52.152-1.012l-.998-.064a7 7 0 0 1-.12.855zm-.017-2.037q-.017-.523-.104-1.012l-.948.321c.063.424.084.873.089.873zM15.096 4.99q-.225-.48-.51-.911l-.837.544c.245.37.439.78.631 1.188zm-1.55-1.55a7 7 0 0 1-.77-.711l-.728.687c.308.328.663.612.663.612zM12.45 1.916q-.427-.312-.89-.563l-.468.885c.398.217.765.487.765.487zM9.56.152q-.52-.104-1.012-.152l-.064.998c.43.041.855.12.855.12zM8 4.5a.5.5 0 0 1 .5.5v2.5H11a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V8.5H5a.5.5 0 0 1 0-1h2.5V5a.5.5 0 0 1 .5-.5"/>
+      </svg>
+    </div>
+    <span className="text-uppercase tracking-wider small fw-bold">Add New Task</span>
+  </button>
+</div>
         )}
       </div>
 

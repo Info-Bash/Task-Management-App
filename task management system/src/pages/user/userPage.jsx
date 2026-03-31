@@ -15,7 +15,7 @@ export function UserPage() {
     userProfile,
     handleUpdateUser,
     logout
-  } = useAuth()
+  } = useAuth();
 
   const [showSidebar, setShowSidebar] = useState(false);
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};

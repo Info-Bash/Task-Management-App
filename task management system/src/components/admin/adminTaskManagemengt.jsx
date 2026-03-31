@@ -3,6 +3,7 @@ import FilterBar from '../general/searchAndFilter';
 import Pagination from '../general/pagination';
 import API from "../../api/api"
 import { smartDate } from '../../utils/dateFormat';
+import getStatusConfig from '../../helpers/getStatusColor';
 import useApiWithToast from '../../hooks/useApiWithToast';
 import { ConfirmationModal } from '../general/confirmationModal';
 
@@ -73,18 +74,6 @@ const AdminTaskManager = () => {
     { value: 'completed', label: 'Completed' },
     { value: 'verified', label: 'Verified' }
   ];
-
-  // Helper function to get status config
-  const getStatusConfig = (status) => {
-    switch (status) {
-      case "completed":
-        return { label: "Completed", color: "success", border: "border-success" };
-      case "verified":
-        return { label: "Verified", color: "info", border: "border-info" };
-      default:
-        return { label: "Pending", color: "secondary", border: "border-secondary" };
-    }
-  };
 
   /* Update the component every minute to refresh the UI */
   useEffect(() => {

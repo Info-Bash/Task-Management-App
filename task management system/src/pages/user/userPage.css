@@ -1,3 +1,42 @@
+.task-add-card {
+  width: 220px;
+  height: 160px;
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+  color: #6c757d;
+  text-decoration: none;
+}
+
+.task-add-card:hover {
+  background-color: #ffffff;
+  border-color: #0d6efd; /* Bootstrap primary color */
+  color: #0d6efd;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.task-add-card .icon-wrapper {
+  transition: transform 0.2s ease;
+}
+
+.task-add-card:hover .icon-wrapper {
+  transform: scale(1.1);
+}
+
+.tracking-wider {
+  letter-spacing: 0.05rem;
+}
+
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
+.border-transparent {
+  border-color: transparent !important;
+}
+
 .alert {
   transition: opacity 0.5s ease;
 }

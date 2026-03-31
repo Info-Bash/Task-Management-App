@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ConfirmationModal } from '../general/confirmationModal';
-import { EditingTask } from './editingTask';
-import { smartDate } from '../../utils/dateFormat';
+import getStatusTimestamp from '../../helpers/statusTimeStamp';
 import ActionDropdown from '../general/floatingDropdown';
 import useApiWithToast from '../../hooks/useApiWithToast';
 import API from '../../api/api';
@@ -11,11 +10,10 @@ const TaskManager = ({ tasks, setTasks, error, loading }) => {
   const [activeTab, setActiveTab] = useState('pending');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  
+
   const [delLoading, setDelLoading] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const [activeDropdownId, setActiveDropdownId] = useState(null); // Track which dropdown is open
-  const [editingTask, setEditingTask] = useState(null);
 
   // Custom hook for API calls with toast notifications
   const { execute } = useApiWithToast();
@@ -43,12 +41,12 @@ const TaskManager = ({ tasks, setTasks, error, loading }) => {
     }
   };
 
-  const handleScroll = () => {
+  /* const handleScroll = () => {
     const dropdowns = document.querySelectorAll('.dropdown-menu.show');
     dropdowns.forEach(menu => {
       menu.classList.remove('show');
     });
-  };
+  }; */
 
 
   // Trigger for single delete (from dropdown)
@@ -134,160 +132,148 @@ const TaskManager = ({ tasks, setTasks, error, loading }) => {
 
   return (
     <>
-      <div className="container mt-5 shadow-sm bg-white p-0" style={{ borderRadius: '8px', border: '1px solid #dee2e6' }}>
-        {/* TABS HEADER */}
-        <div
-          className="d-flex border-bottom overflow-x-auto flex-nowrap"
-          style={{
-            scrollbarWidth: 'none', // Hides scrollbar for Firefox
-            msOverflowStyle: 'none', // Hides scrollbar for IE/Edge
-            WebkitOverflowScrolling: 'touch' // Smooth scrolling for iOS
-          }}
+      <div className="container mt-5 px-2 px-md-0 pb-5">
+  {/* TABS HEADER - Responsive & Scrollable */}
+  <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+    <div className="row g-2 mb-4">
+    {[
+      { id: 'pending', label: 'PENDING', color: 'secondary', count: tasks.filter(t => t.status === 'pending').length },
+      { id: 'completed', label: 'COMPLETED', color: 'success', count: tasks.filter(t => t.status === 'completed' && !t.verified).length },
+      { id: 'verified', label: 'VERIFIED', color: 'info', count: tasks.filter(t => t.status === 'verified').length }
+    ].map((tab) => (
+      <div key={tab.id} className="col-12 col-md-4">
+        <button
+          onClick={() => { setActiveTab(tab.id); setSelectedIds([]); }}
+          className={`btn w-100 py-3 px-4 fw-bold rounded-3 shadow-sm border-0 transition-all d-flex justify-content-between align-items-center ${
+            activeTab === tab.id 
+              ? 'bg-primary text-white' 
+              : 'bg-white text-muted border'
+          }`}
         >
-          {/* Style tag to hide scrollbar for Chrome/Safari */}
-          <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
-
-          {/* PENDING TAB */}
-          <button
-            className={`btn px-3 px-md-4 py-3 fw-bold rounded-0 flex-fill text-nowrap ${activeTab === 'pending' ? 'border-bottom border-2 border-primary text-primary' : 'text-muted'}`}
-            onClick={() => { setActiveTab('pending'); setSelectedIds([]); }}
-          >
-            PENDING <span className="badge bg-secondary ms-1">{tasks.filter(t => t.status === 'pending').length}</span>
-          </button>
-
-          {/* COMPLETED TAB */}
-          <button
-            className={`btn px-3 px-md-4 py-3 fw-bold rounded-0 flex-fill text-nowrap ${activeTab === 'completed' ? 'border-bottom border-2 border-primary text-primary' : 'text-muted'}`}
-            onClick={() => { setActiveTab('completed'); setSelectedIds([]); }}
-          >
-            COMPLETED <span className="badge bg-success ms-1">{tasks.filter(t => t.status === 'completed' && !t.verified).length}</span>
-          </button>
-
-          {/* VERIFIED TAB */}
-          <button
-            className={`btn px-3 px-md-4 py-3 fw-bold rounded-0 flex-fill text-nowrap ${activeTab === 'verified' ? 'border-bottom border-2 border-primary text-primary' : 'text-muted'}`}
-            onClick={() => { setActiveTab('verified'); setSelectedIds([]); }}
-          >
-            VERIFIED <span className="badge bg-info ms-1">{tasks.filter(t => t.status === 'verified').length}</span>
-          </button>
-        </div>
-
-        {/* ACTION BAR / TABLE HEADER */}
-        <div className="table-responsive">
-          <table className="table mb-0 align-middle">
-            <thead className="table-light">
-              <tr>
-                <th style={{ width: '50px' }} className="ps-4">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    onChange={toggleSelectAll}
-                    checked={filteredTasks.length > 0 && selectedIds.length === filteredTasks.length}
-                  />
-                </th>
-                <th className="text-muted small fw-bold">
-                  {selectedIds.length > 0 ? (
-                    <button className="btn btn-sm btn-outline-danger py-0" onClick={triggerBulkDelete}>
-                      Delete Selected ({selectedIds.length})
-                    </button>
-                  ) : 'TASK'}
-                </th>
-                <th className="text-muted small fw-bold text-end pe-4">ACTIONS</th>
-              </tr>
-            </thead>
-          </table>
-
-          {/* SCROLLABLE BODY */}
-          <div style={{ maxHeight: '400px', overflowY: 'auto' }} onScroll={handleScroll}>
-            <table className="table table-hover mb-0 align-middle">
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="3" className="text-center py-4 text-muted">
-                      <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                      <span className="visually-hidden" role="status">Loading...</span>
-                    </td>
-                  </tr>
-
-                ) : error ? (
-                  <tr>
-                    <td colSpan="3" className="text-center py-2 text-danger">
-                      <i className="bi bi-exclamation-triangle d-block" style={{ fontSize: "2rem" }}></i>
-                      <p className="my-1">{error}</p>
-                    </td>
-                  </tr>
-
-                ) : filteredTasks.length === 0 ? (
-                  <tr>
-                    <td colSpan="3" className="text-center py-2">
-                      <div className="text-muted">
-                        <i className="bi bi-clipboard-x d-block" style={{ fontSize: "2rem" }}></i>
-                        <p className="my-1">No {activeTab} tasks yet.</p>
-                      </div>
-                    </td>
-                  </tr>
-
-                ) : (
-                  filteredTasks.map((task) => (
-                    <tr key={task._id}>
-                      <td style={{ width: '50px' }} className="ps-4">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={selectedIds.includes(task._id)}
-                          onChange={() => toggleSelect(task._id)}
-                        />
-                      </td>
-
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <div className="bg-light rounded d-none d-md-block me-3" style={{ width: '50px', height: '40px' }}>
-                            <div className="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
-                              📝
-                            </div>
-                          </div>
-                          <div>
-                            <div className="fw-bold text-dark text-truncate" style={{ maxWidth: '300px' }}>{task.title}</div>
-                            <div className="text-muted small text-truncate" style={{ maxWidth: '300px' }}>{task.desc}</div>
-                            <div className="x-small text-secondary mt-1" style={{ fontSize: '11px' }}>
-                              Created: {smartDate(task.createdAt, now)}
-                              {task.dateCompleted && <> | Completed: {smartDate(task.dateCompleted, now)}</>}
-                              {task.dateVerified && <> | Verified: {smartDate(task.dateVerified, now)}</>}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="text-end pe-4">
-                        {activeTab === 'pending' ? (
-                          <ActionDropdown
-                            isOpen={activeDropdownId === task._id}
-                            onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
-                            onClose={() => setActiveDropdownId(null)}
-                            onComplete={() => completeTask(task._id)}
-                            onView={task._id}
-                            onEdit={() => setEditingTask(task)}
-                            onDelete={() => triggerSingleDelete(task._id)}
-                          />
-                        ) : (
-                          <ActionDropdown
-                            isOpen={activeDropdownId === task._id}
-                            onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
-                            onClose={() => setActiveDropdownId(null)}
-                            onView={task._id}
-                            onDelete={() => triggerSingleDelete(task._id)}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-
-            </table>
-          </div>
-        </div>
+          <span>{tab.label}</span>
+          <span className={`badge rounded-pill ${activeTab === tab.id ? 'bg-white text-primary' : `bg-${tab.color}`}`}>
+            {tab.count}
+          </span>
+        </button>
       </div>
+    ))}
+  </div>
+
+    {/* SELECTION & BULK ACTIONS BAR */}
+    <div className="bg-light px-4 py-2 d-flex align-items-center justify-content-between border-bottom">
+      <div className="d-flex align-items-center">
+        <div className="form-check mb-0">
+          <input
+            type="checkbox"
+            className="form-check-input mt-0"
+            style={{ width: '1.1rem', height: '1.1rem' }}
+            onChange={toggleSelectAll}
+            checked={filteredTasks.length > 0 && selectedIds.length === filteredTasks.length}
+          />
+        </div>
+        <span className="ms-3 small fw-bold text-muted text-uppercase tracking-wider">
+          {selectedIds.length > 0 ? `${selectedIds.length} Selected` : 'Select All'}
+        </span>
+      </div>
+
+      {selectedIds.length > 0 && (
+        <button className="btn btn-sm btn-danger rounded-pill px-3 fw-bold" onClick={triggerBulkDelete}>
+          <i className="bi bi-trash3 me-1"></i> Delete
+        </button>
+      )}
+    </div>
+
+    {/* BODY */}
+    <div 
+      className="p-3 bg-white"
+    >
+      {loading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status"></div>
+          <p className="text-muted mt-2 small">Loading tasks...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-5 text-danger">
+          <i className="bi bi-exclamation-triangle fs-1"></i>
+          <p className="mt-2 fw-bold">{error}</p>
+        </div>
+      ) : filteredTasks.length === 0 ? (
+        <div className="text-center py-5">
+          <i className="bi bi-clipboard-x text-muted fs-1 opacity-25"></i>
+          <p className="text-muted mt-2">No {activeTab} tasks yet.</p>
+        </div>
+      ) : (
+        <div className="d-flex flex-column gap-2">
+          {filteredTasks.map((task) => (
+            <div 
+              key={task._id} 
+              className={`card border rounded-3 transition-all ${selectedIds.includes(task._id) ? 'border-primary bg-primary-subtle' : 'border-light-subtle'}`}
+              style={{ transition: '0.2s ease' }}
+            >
+              <div className="card-body p-3">
+                <div className="row align-items-center g-2">
+                  {/* Select Checkbox */}
+                  <div className="col-auto">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={selectedIds.includes(task._id)}
+                      onChange={() => toggleSelect(task._id)}
+                    />
+                  </div>
+
+                  {/* Task Icon (Desktop only) */}
+                  <div className="col-auto d-none d-md-block ms-2">
+                    <div className="bg-light rounded p-2 text-muted" style={{ width: '40px', height: '40px', display: 'grid', placeItems: 'center' }}>
+                      📝
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="col px-md-3">
+                    <div className="fw-bold text-dark text-truncate mb-0" style={{ maxWidth: '250px' }}>
+                      {task.title}
+                    </div>
+                    <div className="text-muted small text-truncate" style={{ maxWidth: '300px' }}>
+                      {task.desc}
+                    </div>
+                    <div className="text-secondary mt-1" style={{ fontSize: '11px' }}>
+                      <i className="bi bi-calendar3 me-1"></i>
+                      {getStatusTimestamp(task, now)}
+                    </div>
+                  </div>
+
+                  {/* Actions - Matches your original conditional logic */}
+                  <div className="col-12 col-md-auto mt-2 mt-md-0 d-flex justify-content-end">
+                    {activeTab === 'pending' ? (
+                      <ActionDropdown
+                        isOpen={activeDropdownId === task._id}
+                        onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
+                        onClose={() => setActiveDropdownId(null)}
+                        onComplete={() => completeTask(task._id)}
+                        onView={task._id}
+                        onEdit={task._id}
+                        onDelete={() => triggerSingleDelete(task._id)}
+                      />
+                    ) : (
+                      <ActionDropdown
+                        isOpen={activeDropdownId === task._id}
+                        onToggle={() => setActiveDropdownId(activeDropdownId === task._id ? null : task._id)}
+                        onClose={() => setActiveDropdownId(null)}
+                        onView={task._id}
+                        onDelete={() => triggerSingleDelete(task._id)}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
 
       {/* DELETE CONFIRMATION MODAL */}
       <ConfirmationModal
@@ -306,30 +292,6 @@ const TaskManager = ({ tasks, setTasks, error, loading }) => {
         confirmText={<> Yes, Delete <i className="bi bi-trash ms-1"></i></>}
         confirmBtnClass="btn-danger"
       />
-
-      {/* VIEW TASK MODAL */}
-      {/* {viewingTask && (
-        <ViewTask
-          task={viewingTask}
-          onClose={() => setViewingTask(null)}
-          onEdit={() => {
-            setEditingTask(viewingTask); Switch to edit mode
-            setViewingTask(null);         Close view mode
-          }}
-          showEditButton={activeTab === 'pending'}
-        />
-      )} */}
-
-      {/* EDIT TASK MODAL */}
-      {editingTask && (
-        <EditingTask
-          task={editingTask}
-          onClose={() => setEditingTask(null)}
-          setTasks={setTasks}
-        />
-      )}
-
-
     </>
   );
 };
