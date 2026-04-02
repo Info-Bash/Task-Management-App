@@ -17,7 +17,8 @@ dataBaseConnect();
 
 // Allow React dev server
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: "https://task-management-app-kappa-gold.vercel.app",
+  credentials: true
 }));
 
 //express middleware
