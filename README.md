@@ -151,7 +151,7 @@ GET /api/tasks?page=1&limit=10&status=completed&search=meeting
 
 ## 🌍 Live Demo
 
-https://task-management-app-kappa-gold.vercel.app
+https://task-management-app-sigma-eosin.vercel.app/
 
 ---
 
