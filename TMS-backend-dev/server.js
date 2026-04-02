@@ -17,7 +17,7 @@ dataBaseConnect();
 
 // Allow React dev server
 app.use(cors({
-  origin: "https://task-management-app-sigma-eosin.vercel.app/",
+  origin: "https://task-management-app-sigma-eosin.vercel.app",
   credentials: true
 }));
 
