@@ -11,6 +11,12 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    outDir: 'build',
+  },
+  server: {
+    historicFallback: true,
+  },
   css: {
     preprocessorOptions: {
       scss: {
