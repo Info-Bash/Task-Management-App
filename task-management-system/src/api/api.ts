@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:3000/api/TMS",
+  baseURL: "https://task-management-app-ve7w.onrender.com/api/TMS",
 });
 
 API.interceptors.request.use(
