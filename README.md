@@ -42,7 +42,7 @@ client (React)  →  API (Express)  →  Database (MongoDB)
 
 ## 📚 Project Documentation
 
-* 🔵 [Frontend Documentation](./task management system/README.md)
+* 🔵 [Frontend Documentation](./task-management-system/README.md)
 * 🟢 [Backend Documentation](./TMS-backend-dev/README.md)
 
 ---
@@ -183,8 +183,3 @@ MIT License
 ## ⭐ Support
 
 If you found this project helpful, consider giving it a ⭐ on GitHub!
-
-## 🔗 Related Documentation
-
-* [Frontend Documentation](/task-management-system/README.md)
-* [Backend Documentation](/TMS-backend-dev/README.md)
